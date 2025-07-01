@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
+  title?: string | React.ReactNode;
   content: string | React.ReactNode;
   position?: "top" | "bottom" | "left" | "right";
 }
@@ -109,7 +109,7 @@ export default function InfoModal({
 
       {/* Modal - Relative positioning on desktop */}
       <div
-        className={`absolute z-50 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 ${positionClasses[position]}`}
+        className={`absolute z-50 w-72 bg-white border border-gray-200 rounded-lg shadow-lg p-4 ${positionClasses[position]}`}
       >
         {/* Arrow pointer */}
         <div

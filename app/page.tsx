@@ -88,27 +88,35 @@ export default function Home() {
                 <InfoModal
                   isOpen={showInfoModal}
                   onClose={() => setShowInfoModal(false)}
-                  title="We'll handle the rest"
+                  title={
+                    <>
+                      <u>
+                        <i>Wdym</i>
+                      </u>{" "}
+                      we'll handle the rest?
+                    </>
+                  }
                   position="bottom"
                   content={
-                    <div>
-                      <p className="mb-3">
+                    <div className="text-left">
+                      <p className="mb-3 text-left">
                         Once you provide your creative idea, our AI takes care
-                        of everything:
+                        of it all:
                       </p>
-                      <ul className="space-y-1 list-disc list-inside">
-                        <li>
-                          Generate a 30-second funny video using Google's Veo 3
+                      <ul className="space-y-1 list-disc list-outside ml-5 text-left">
+                        <li className="text-left">
+                          Generate a short-form funny video using Google's Veo 3
                         </li>
-                        <li>Optimize it for TikTok's format and audience</li>
-                        <li>Automatically publish it to your TikTok account</li>
-                        <li>
+                        <li className="text-left">
+                          Optimize it for TikTok's format and audience
+                        </li>
+                        <li className="text-left">
+                          Automatically publish it to your TikTok account
+                        </li>
+                        <li className="text-left">
                           Add it to your personal dashboard for management
                         </li>
                       </ul>
-                      <p className="mt-3 text-xs text-gray-500">
-                        No video editing experience required!
-                      </p>
                     </div>
                   }
                 />

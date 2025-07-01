@@ -46,14 +46,14 @@ export default function ShimmerText({
         if (currentIndex < letters.length) {
           setShimmerIndex(currentIndex);
           currentIndex++;
-          animationTimeout = setTimeout(shimmerEachLetter, 360);
+          animationTimeout = setTimeout(shimmerEachLetter, 240);
         } else {
           // All letters shimmered, now fade back
           animationTimeout = setTimeout(() => {
             setShimmerIndex(-1);
             // Change color offset for next cycle to get different color combinations
             setColorOffset((prev) => (prev + 2) % shimmerGradients.length);
-          }, 360);
+          }, 240);
         }
       };
 
