@@ -64,7 +64,7 @@ export default function Home() {
             </h2>
             <div className="flex items-center justify-center gap-2">
               <p className="text-gray-600">
-                Think of an idea for the next viral AI video. We'll handle the
+                Think of an idea for your next viral AI video. We'll handle the
                 rest.
               </p>
               <div className="relative">

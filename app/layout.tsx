@@ -5,8 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Slop - AI Video Generator",
-  description: "You think of an idea. We'll handle the rest.",
+  title: "Slop",
+  description:
+    "Think of an idea for your next viral AI video. We'll handle the rest.",
   icons: {
     icon: "/logos/slop.png",
     apple: "/logos/slop.png",
