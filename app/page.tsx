@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header isAuthenticated={true} userName="Aaron Jin" quotaRemaining={5} />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">

@@ -53,7 +53,7 @@ export default function ShimmerText({
             setShimmerIndex(-1);
             // Change color offset for next cycle to get different color combinations
             setColorOffset((prev) => (prev + 2) % shimmerGradients.length);
-          }, 240);
+          }, 160);
         }
       };
 
