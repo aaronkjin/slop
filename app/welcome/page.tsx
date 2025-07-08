@@ -144,17 +144,16 @@ export default function WelcomePage() {
   const steps = [
     {
       number: 1,
-      title: "Enter Your Idea",
-      description:
-        "Type a funny prompt or choose from examples. Be creative with your ideas - the weirder, the better!",
+      title: "Idea",
+      description: "Unleash your creativity — or brainrot.",
       details:
         "Our AI understands humor patterns and can work with everything from simple one-liners to complex scenarios. Whether you want absurdist comedy, meta-humor, or viral TikTok trends, just describe your vision.",
     },
     {
       number: 2,
-      title: "AI Generation",
+      title: "Creation",
       description:
-        "Veo 3 creates your video in 30-60 seconds with stunning quality and perfect timing.",
+        "Slop creates your video in less than a minute with stunning quality and perfect timing.",
       details:
         "Google's most advanced video AI model generates high-quality, short-form content optimized for social media. The AI handles cinematography, pacing, and visual storytelling automatically.",
     },
@@ -178,12 +177,9 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <Header variant="landing" showAuthButtons={true} />
 
-      {/* Main Content */}
       <main className="min-h-screen flex items-center justify-center px-4 py-32 relative overflow-hidden isolate">
-        {/* Decorative Background */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[1400px] max-h-[1400px] -z-10 opacity-20 pointer-events-none">
           <Image
             src="/icons/puddle.jpg"
@@ -196,8 +192,13 @@ export default function WelcomePage() {
         <div className="text-center max-w-4xl mx-auto z-10">
           <div className="space-y-8">
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-6xl font-light text-gray-900 tracking-tight leading-none">
-                Create <ShimmerText text="hilarious" className="font-light" />
+              <h1 className="text-3xl md:text-5xl font-light text-gray-600 tracking-tight leading-none">
+                Create{" "}
+                <ShimmerText
+                  text="hilarious"
+                  className="font-light"
+                  textColor="rgb(75, 85, 99)"
+                />
               </h1>
 
               <div className="flex justify-center">
@@ -211,15 +212,15 @@ export default function WelcomePage() {
                 />
               </div>
 
-              <h2 className="text-4xl md:text-6xl font-light text-gray-900 tracking-tight leading-none">
+              <h2 className="text-3xl md:text-5xl font-light text-gray-600 tracking-tight leading-none">
                 instantly
               </h2>
             </div>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto mt-12 leading-relaxed">
-              Think of an idea for your next viral AI video. We'll generate it
-              with Veo 3 and automatically publish it to your TikTok account.
+            <p className="text-lg md:text-xl text-gray-500 font-normal max-w-3xl mx-auto mt-12 leading-relaxed">
+              Give us an idea. <i>Any</i> idea. We'll generate it, optimize it
+              for virality, and automatically publish it to your TikTok account.
             </p>
 
             {/* CTA Buttons */}
@@ -242,12 +243,12 @@ export default function WelcomePage() {
       <section ref={howItWorksSectionRef} className="bg-gray-50 relative pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="text-center pt-20 pb-12 px-4">
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-normal text-gray-900 mb-6 tracking-tight">
               How it works
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
-              From idea to viral video in under 2 minutes. Our streamlined
-              process handles everything automatically.
+            <p className="text-lg md:text-xl text-gray-600 font-normal max-w-3xl mx-auto leading-relaxed">
+              From idea to viral video in 2 minutes. Our process handles
+              everything automatically.
             </p>
           </div>
 
@@ -277,15 +278,15 @@ export default function WelcomePage() {
                       </div>
                     </div>
 
-                    <h3 className="text-3xl md:text-4xl font-light text-gray-900 mb-6 tracking-tight">
+                    <h3 className="text-3xl md:text-4xl font-normal text-gray-900 mb-6 tracking-tight">
                       {step.title}
                     </h3>
 
-                    <p className="text-lg md:text-xl text-gray-600 mb-6 font-light leading-relaxed">
+                    <p className="text-lg md:text-xl text-gray-600 mb-6 font-normal leading-relaxed">
                       {step.description}
                     </p>
 
-                    <p className="text-gray-600 leading-relaxed font-light">
+                    <p className="text-gray-600 leading-relaxed font-normal">
                       {step.details}
                     </p>
 
@@ -372,10 +373,10 @@ export default function WelcomePage() {
 
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight leading-tight">
+            <h2 className="text-4xl md:text-5xl font-normal text-gray-900 mb-6 tracking-tight leading-tight">
               Ready to create your first viral video?
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 font-normal max-w-3xl mx-auto leading-relaxed">
               Join creators who are using AI to scale their TikTok presence.
             </p>
             <div className="flex justify-center mt-12">

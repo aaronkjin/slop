@@ -50,7 +50,7 @@ export default function Header({
 
   const getHeaderClasses = () => {
     const baseClasses =
-      "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-in-out w-[90vw] md:min-w-[600px] md:w-auto";
+      "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-in-out w-[90vw] md:min-w-[800px] md:w-auto";
 
     if (variant === "landing") {
       return `${baseClasses} ${

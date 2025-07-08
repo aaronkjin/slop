@@ -5,11 +5,13 @@ import { useState, useEffect } from "react";
 interface ShimmerTextProps {
   text: string;
   className?: string;
+  textColor?: string;
 }
 
 export default function ShimmerText({
   text,
   className = "",
+  textColor = "#171717",
 }: ShimmerTextProps) {
   const [shimmerIndex, setShimmerIndex] = useState(-1);
   const [colorOffset, setColorOffset] = useState(0);
@@ -86,7 +88,7 @@ export default function ShimmerText({
               shimmerIndex === index ? getLetterGradient(index) : "transparent",
             backgroundClip: shimmerIndex === index ? "text" : "unset",
             WebkitBackgroundClip: shimmerIndex === index ? "text" : "unset",
-            color: shimmerIndex === index ? "transparent" : "#171717",
+            color: shimmerIndex === index ? "transparent" : textColor,
             textShadow:
               shimmerIndex === index
                 ? "0 0 8px rgba(167, 139, 250, 0.3), 0 0 16px rgba(236, 72, 153, 0.2)"
