@@ -89,7 +89,7 @@ export default function Header({
           <div className="hidden md:flex items-center space-x-8">
             {variant === "main" && (
               <div className="flex items-center space-x-6">
-                <span className="text-sm text-gray-600 whitespace-nowrap">
+                <span className="text-xs text-gray-600 whitespace-nowrap">
                   5 generations remaining
                 </span>
                 <button className="bg-gray-900 text-white text-sm px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors whitespace-nowrap">
@@ -128,7 +128,7 @@ export default function Header({
           <div className="flex flex-col items-center space-y-4">
             {variant === "main" && (
               <>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs text-gray-600">
                   5 generations remaining
                 </span>
                 <button className="bg-gray-900 text-white text-sm px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors">
