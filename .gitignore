@@ -1,5 +1,8 @@
 node_modules
 .next
 
-README.md
-instructions.md
+*.md
+
+.claude
+PRPs/
+examples/
