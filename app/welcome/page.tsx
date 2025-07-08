@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AuthButton from "../../components/AuthButton";
 import ShimmerText from "../../components/ShimmerText";
+import Header from "../../components/Header";
 import { useGlassmorphism } from "use-glassmorphism";
 
 export default function WelcomePage() {
@@ -178,152 +179,60 @@ export default function WelcomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
-        <div className="w-full px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Image
-              src="/logos/slop_cropped.png"
-              alt="Slop"
-              width={108}
-              height={32}
-              className="h-9 w-auto"
-            />
-            <div className="flex items-center space-x-3">
-              <Link href="/auth/login">
-                <AuthButton variant="outline" fullWidth={false}>
-                  Sign In
-                </AuthButton>
-              </Link>
-              <Link href="/auth/signup">
-                <AuthButton variant="primary" fullWidth={false}>
-                  Get Started
-                </AuthButton>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header variant="landing" showAuthButtons={true} />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-16">
-        <div className="text-center">
-          {/* Hero Section - exactly matching main page sizes */}
-          <div className="mb-16">
-            <h1 className="text-2xl font-medium text-gray-900 mb-3">
-              Create <ShimmerText text="hilarious" />{" "}
-              <span className="inline-flex items-baseline gap-1">
+      <main className="min-h-screen flex items-center justify-center px-4 py-32 relative overflow-hidden isolate">
+        {/* Decorative Background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[1400px] max-h-[1400px] -z-10 opacity-20 pointer-events-none">
+          <Image
+            src="/icons/puddle.jpg"
+            alt="Decorative background gradient"
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
+
+        <div className="text-center max-w-4xl mx-auto z-10">
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-6xl font-light text-gray-900 tracking-tight leading-none">
+                Create <ShimmerText text="hilarious" className="font-light" />
+              </h1>
+
+              <div className="flex justify-center">
                 <Image
                   src="/logos/slop_cropped.png"
                   alt="Slop"
-                  width={60}
-                  height={18}
-                  className="inline-block"
-                  style={{ transform: "translateY(13px)" }}
+                  width={600}
+                  height={180}
+                  className="w-auto h-48 md:h-60 mix-blend-multiply"
+                  priority
                 />
-                instantly
-              </span>
-            </h1>
+              </div>
 
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+              <h2 className="text-4xl md:text-6xl font-light text-gray-900 tracking-tight leading-none">
+                instantly
+              </h2>
+            </div>
+
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto mt-12 leading-relaxed">
               Think of an idea for your next viral AI video. We'll generate it
-              with Google's Veo 3 and automatically publish it to your TikTok
-              account.
+              with Veo 3 and automatically publish it to your TikTok account.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* CTA Buttons */}
+            <div className="flex justify-center mt-16">
               <Link href="/auth/signup">
                 <AuthButton
                   variant="primary"
                   fullWidth={false}
-                  className="px-8 py-4 text-base"
+                  className="px-12 py-4 text-lg font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Start Creating Videos
                 </AuthButton>
               </Link>
-              <Link
-                href="/auth/login"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Already have an account? Sign in
-              </Link>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="grid md:grid-cols-3 gap-8 mb-24">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                AI Video Generation
-              </h3>
-              <p className="text-gray-600">
-                Powered by Google's Veo 3, the most advanced AI video generation
-                model available.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Auto-Publish to TikTok
-              </h3>
-              <p className="text-gray-600">
-                Videos are automatically published to your TikTok account with
-                optimal formatting.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Viral-Ready Content
-              </h3>
-              <p className="text-gray-600">
-                Optimized for current humor trends: absurdist, meta-humor, and
-                Gen Z comedy styles.
-              </p>
             </div>
           </div>
         </div>
@@ -332,11 +241,11 @@ export default function WelcomePage() {
       {/* How it Works - Stripe-like Scrolling Section */}
       <section ref={howItWorksSectionRef} className="bg-gray-50 relative pb-16">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center pt-16 pb-8 px-4">
-            <h2 className="text-3xl font-medium text-gray-900 mb-4">
+          <div className="text-center pt-20 pb-12 px-4">
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight">
               How it works
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
               From idea to viral video in under 2 minutes. Our streamlined
               process handles everything automatically.
             </p>
@@ -354,24 +263,29 @@ export default function WelcomePage() {
                   key={step.number}
                   ref={[step1Ref, step2Ref, step3Ref, step4Ref][index]}
                   data-step={step.number}
-                  className="min-h-[80vh] flex items-center py-12"
+                  className="min-h-[50vh] flex items-center py-8"
                 >
                   <div className="max-w-lg">
-                    <div className="mb-6">
-                      <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                        Step {step.number}
-                      </span>
+                    <div className="mb-8">
+                      <div className="flex items-center mb-4">
+                        <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium mr-3">
+                          {step.number}
+                        </div>
+                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                          Step {step.number}
+                        </span>
+                      </div>
                     </div>
 
-                    <h3 className="text-3xl font-medium text-gray-900 mb-6">
+                    <h3 className="text-3xl md:text-4xl font-light text-gray-900 mb-6 tracking-tight">
                       {step.title}
                     </h3>
 
-                    <p className="text-lg text-gray-600 mb-6">
+                    <p className="text-lg md:text-xl text-gray-600 mb-6 font-light leading-relaxed">
                       {step.description}
                     </p>
 
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed font-light">
                       {step.details}
                     </p>
 
@@ -390,12 +304,12 @@ export default function WelcomePage() {
                     </div>
 
                     {step.number === 4 && (
-                      <div className="mt-8">
+                      <div className="mt-10">
                         <Link href="/auth/signup">
                           <AuthButton
                             variant="primary"
                             fullWidth={false}
-                            className="px-6 py-3"
+                            className="px-8 py-4 text-lg font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                           >
                             Start Creating Now
                           </AuthButton>
@@ -446,24 +360,35 @@ export default function WelcomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-24 md:py-32 relative overflow-hidden isolate">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3 w-[120vw] max-w-[1800px] h-[60vw] -z-10 opacity-20 pointer-events-none">
+          <Image
+            src="/icons/puddle_ground.png"
+            alt="Decorative background gradient"
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
+
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8">
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">
+          <div className="space-y-8">
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight leading-tight">
               Ready to create your first viral video?
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-lg md:text-xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
               Join creators who are using AI to scale their TikTok presence.
             </p>
-            <Link href="/auth/signup">
-              <AuthButton
-                variant="primary"
-                fullWidth={false}
-                className="px-8 py-4 text-base"
-              >
-                Get Started Free
-              </AuthButton>
-            </Link>
+            <div className="flex justify-center mt-12">
+              <Link href="/auth/signup">
+                <AuthButton
+                  variant="primary"
+                  fullWidth={false}
+                  className="px-12 py-4 text-lg font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Get Started Free
+                </AuthButton>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

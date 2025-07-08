@@ -41,10 +41,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header isAuthenticated={true} userName="Aaron Jin" quotaRemaining={5} />
+      <Header variant="main" />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 pt-24">
         <div className="max-w-2xl mx-auto">
           {/* Welcome Message */}
           <div className="text-center mb-8">
