@@ -144,30 +144,32 @@ export default function WelcomePage() {
   const steps = [
     {
       number: 1,
-      title: "Idea",
+      title: "Ideate",
       description: "Unleash your creativity — or brainrot.",
       details:
-        "Our AI understands humor patterns and can work with everything from simple one-liners to complex scenarios. Whether you want absurdist comedy, meta-humor, or viral TikTok trends, just describe your vision.",
+        "Slop scrapes the web to understand humor patterns, working with everything from one-liners to complex scenarios. Whether you want meta-humor or viral TikTok trends, just describe your vision.",
     },
     {
       number: 2,
-      title: "Creation",
-      description:
-        "Slop creates your video in less than a minute with stunning quality and perfect timing.",
+      title: "Create",
+      description: "Slop creates your TikTok video in <1 minute.",
       details:
-        "Google's most advanced video AI model generates high-quality, short-form content optimized for social media. The AI handles cinematography, pacing, and visual storytelling automatically.",
+        "Using Veo 3, Slop generates high-quality, short-form content optimized for social media. We also take care of cinematography and visual storytelling.",
     },
     {
       number: 3,
       title: "Auto-Publish",
-      description:
-        "Video goes live on your TikTok automatically with optimal formatting and timing.",
+      description: "Video goes live on your TikTok automatically.",
       details:
-        "We handle the technical details - aspect ratio optimization, compression, hashtag suggestions, and posting at peak engagement times. Your content appears professionally polished.",
+        "We handle the technical details - aspect ratio optimization, compression, hashtag suggestions, along with titles and captions. Your content is the most polished slop — ever.",
     },
     {
       number: 4,
-      title: "Go Viral",
+      title: (
+        <>
+          Go <ShimmerText text="Viral" className="font-normal" />
+        </>
+      ),
       description:
         "Track performance in your dashboard and iterate on what works best.",
       details:
@@ -220,7 +222,7 @@ export default function WelcomePage() {
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-gray-500 font-normal max-w-3xl mx-auto mt-12 leading-relaxed">
               Give us an idea. <i>Any</i> idea. We'll generate it, optimize it
-              for virality, and automatically publish it to your TikTok account.
+              to go viral, and automatically publish it to your TikTok account.
             </p>
 
             {/* CTA Buttons */}
@@ -377,7 +379,13 @@ export default function WelcomePage() {
               Ready to create your first viral video?
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-normal max-w-3xl mx-auto leading-relaxed">
-              Join creators who are using AI to scale their TikTok presence.
+              Join people like{" "}
+              <ShimmerText
+                textColor="#4B5563"
+                text="you"
+                className="font-normal"
+              />{" "}
+              who are using AI to scale their TikTok presence.
             </p>
             <div className="flex justify-center mt-12">
               <Link href="/auth/signup">
