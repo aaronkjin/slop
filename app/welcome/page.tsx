@@ -249,7 +249,7 @@ export default function WelcomePage() {
               How it works
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-normal max-w-3xl mx-auto leading-relaxed">
-              From idea to viral video in 2 minutes. Our process handles
+              From idea to viral video in minutes. Our process handles
               everything automatically.
             </p>
           </div>
