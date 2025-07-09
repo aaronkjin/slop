@@ -76,13 +76,19 @@ export default function Header({
       <header className={getHeaderClasses()}>
         <div className="flex items-center justify-between w-full md:min-w-[550px]">
           <div className="flex items-center">
-            <Image
-              src="/logos/slop_cropped.png"
-              alt="Slop"
-              width={96}
-              height={28}
-              className="h-7 w-auto"
-            />
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="focus:outline-none rounded-md"
+              aria-label="Go to top"
+            >
+              <Image
+                src="/logos/slop_cropped.png"
+                alt="Slop"
+                width={96}
+                height={28}
+                className="h-7 w-auto"
+              />
+            </button>
           </div>
 
           {/* Desktop Menu */}
