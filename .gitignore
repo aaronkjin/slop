@@ -2,7 +2,10 @@ node_modules
 .next
 
 *.md
+!README.md
 
 .claude
+
 PRPs/
 examples/
+docs/

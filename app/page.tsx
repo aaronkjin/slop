@@ -100,8 +100,8 @@ export default function Home() {
                   content={
                     <div className="text-left">
                       <p className="mb-3 text-left">
-                        Once you provide your creative idea, our AI takes care
-                        of it all:
+                        Once you provide your creative idea, Slop takes care of
+                        it all:
                       </p>
                       <ul className="space-y-1 list-disc list-outside ml-5 text-left">
                         <li className="text-left">
