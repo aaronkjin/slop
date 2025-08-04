@@ -52,7 +52,7 @@ export default function SuccessPage() {
 
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            🎉 You're all set up!
+            🎉 You&apos;re all set up!
           </h3>
           <p className="text-gray-600 text-sm">
             Your TikTok and Google accounts are connected. You can now:

@@ -64,8 +64,8 @@ export default function Home() {
             </h2>
             <div className="flex items-center justify-center gap-2">
               <p className="text-gray-600">
-                Think of an idea for your next viral AI video. We'll handle the
-                rest.
+                Think of an idea for your next viral AI video. We&apos;ll handle
+                the rest.
               </p>
               <div className="relative">
                 <button
@@ -93,7 +93,7 @@ export default function Home() {
                       <u>
                         <i>Wdym</i>
                       </u>{" "}
-                      we'll handle the rest?
+                      we&apos;ll handle the rest?
                     </>
                   }
                   position="bottom"
