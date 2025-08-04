@@ -3,9 +3,9 @@ node_modules
 
 *.md
 !README.md
+!docs/*.md
 
 .claude
 
 PRPs/
 examples/
-docs/
