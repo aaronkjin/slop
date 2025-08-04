@@ -6,10 +6,23 @@ Because the internet craves fresh, steaming AI slop.
 
 ## How It Works
 
-1. You provide a creative prompt.
-2. OpenAI researches and enhances your idea using web search for current trends and context.
-3. Veo3 generates AI video scenes with audio, optimized for TikTok's format.
-4. FFmpeg intelligently merges multiple scenes into a cohesive final video.
-5. Slop auto-publishes to TikTok with optimized captions and hashtags.
+1. Provide creative prompt.
+2. OpenAI enhances prompt with trending context.
+3. Veo3 generates TikTok-optimized scenes.
+4. FFmpeg merges scenes into a cohesive video.
+5. Auto-publish to TikTok.
 
-**Think of an idea. We handle the rest.**
+## Getting Started
+
+```bash
+# install deps
+npm i
+
+# run app
+npm run dev
+```
+
+## Developer
+
+Aaron Jin  
+[GitHub Profile](https://github.com/aaronkjin)
