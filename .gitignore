@@ -1,11 +1,22 @@
+# Env, config
+.env
+tsconfig.tsbuildinfo
+
+# Dependencies, build output
 node_modules
 .next
 
+# Docs
 *.md
 !README.md
 !docs/*.md
 
+# Dev tools
 .claude
 
+# Project-specific dirs
 PRPs/
 examples/
+
+# Test files
+*.mjs
