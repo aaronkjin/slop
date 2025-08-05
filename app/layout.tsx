@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   description:
     "Think of an idea for your next viral AI video. We'll handle the rest.",
   icons: {
-    icon: "/logos/slop_cropped.png",
-    apple: "/logos/slop_cropped.png",
+    icon: "/logos/slop.png",
+    apple: "/logos/slop.png",
   },
 };
 
