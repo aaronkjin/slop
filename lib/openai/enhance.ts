@@ -14,6 +14,7 @@
  */
 
 import { getOpenAIClient, handleOpenAIError } from './client';
+import { getSceneAnalysisService } from './scene-analysis';
 import { 
   EnhancementResult, 
   EnhanceOptions, 
@@ -91,7 +92,7 @@ export class PromptEnhancementService {
       
       // Use Chat Completions API (works with current SDK)
       response = await client.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -115,6 +116,18 @@ export class PromptEnhancementService {
         throw new Error('No enhancement generated from OpenAI');
       }
       
+      // Perform scene analysis if requested
+      let sceneAnalysisResult;
+      if (enhanceOptions.includeSceneAnalysis) {
+        try {
+          const sceneAnalysisService = getSceneAnalysisService();
+          sceneAnalysisResult = await sceneAnalysisService.analyzePrompt(sanitizedPrompt);
+        } catch (error) {
+          // Scene analysis is optional - continue without it if it fails
+          console.warn('Scene analysis failed:', error);
+        }
+      }
+      
       // Calculate processing metadata
       const processingTime = Date.now() - startTime;
       const metadata: ProcessingMetadata = {
@@ -130,6 +143,7 @@ export class PromptEnhancementService {
         originalPrompt: userPrompt,
         enhancedPrompt: enhancedPrompt.trim(),
         trendContext,
+        sceneAnalysis: sceneAnalysisResult,
         metadata
       };
       
@@ -286,64 +300,6 @@ Process:
 Transform the user's prompt following these guidelines, making it detailed, current, and optimized for viral AI video generation.`;
   }
   
-  /**
-   * Extract trend context from web search results in the response
-   * 
-   * @param response - The OpenAI response with potential web search results
-   * @param originalPrompt - The original user prompt for context
-   * @returns Trend context if available
-   */
-  private extractTrendContext(response: any, originalPrompt: string): TrendContext | undefined {
-    try {
-      // Check if response has tool calls (web search results)
-      const message = response.choices?.[0]?.message;
-      const toolCalls = message?.tool_calls;
-      
-      if (!toolCalls || !Array.isArray(toolCalls)) {
-        return undefined;
-      }
-      
-      // Find web search tool calls
-      const webSearchCalls = toolCalls.filter(call => 
-        call.type === 'web_search_preview' || call.function?.name?.includes('search')
-      );
-      
-      if (webSearchCalls.length === 0) {
-        return undefined;
-      }
-      
-      // Extract search information
-      const trends: string[] = [];
-      let summary = '';
-      
-      // Process search results (this is a simplified extraction)
-      // In practice, the actual format may vary based on OpenAI's implementation
-      for (const call of webSearchCalls) {
-        try {
-          const args = JSON.parse(call.function?.arguments || '{}');
-          if (args.query) {
-            trends.push(`Search performed for: ${args.query}`);
-          }
-        } catch (e) {
-          // Continue if we can't parse arguments
-        }
-      }
-      
-      summary = `Web search conducted to find current trends related to "${originalPrompt}". Enhanced prompt incorporates current viral patterns and trending elements.`;
-      
-      return {
-        query: originalPrompt,
-        trends,
-        summary,
-        searchedAt: new Date()
-      };
-      
-    } catch (error) {
-      // If we can't extract trend context, return undefined
-      // This is not a critical failure
-      return undefined;
-    }
-  }
   
   /**
    * Research current trends for a specific topic
@@ -357,7 +313,7 @@ Transform the user's prompt following these guidelines, making it detailed, curr
       
       // Use Chat Completions with trend-aware system prompt
       const response = await client.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",

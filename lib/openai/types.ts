@@ -67,6 +67,8 @@ export interface EnhanceOptions {
   maxTokens?: number;
   /** Temperature for creativity (0-1) */
   temperature?: number;
+  /** Enable scene analysis for multi-scene detection and character consistency */
+  includeSceneAnalysis?: boolean;
 }
 
 /**
@@ -117,6 +119,8 @@ export interface EnhancementResult {
   trendContext?: TrendContext;
   /** Processing metadata */
   metadata?: ProcessingMetadata;
+  /** Scene analysis result if scene analysis was performed */
+  sceneAnalysis?: EnhancedSceneAnalysisResult;
   /** Error information if enhancement failed */
   error?: string;
   /** Error code for programmatic handling */
@@ -299,6 +303,43 @@ export interface SceneAnalysisResult {
   recommendedApproach: 'single' | 'multi-scene';
 }
 
+/**
+ * Character description for consistent faces across scenes
+ * Based on Veo3 research - highly specific details ensure better consistency
+ */
+export interface CharacterDescription {
+  /** Unique identifier for the character */
+  characterId: string;
+  /** Character name or description identifier */
+  name: string;
+  /** Complete detailed description for Veo3 consistency (exact wording to reuse) */
+  detailedDescription: string;
+  /** Age description (e.g., "in her late 20s") */
+  age: string;
+  /** Hair description (e.g., "straight shoulder-length jet-black hair with soft bangs") */
+  hair: string;
+  /** Clothing description (e.g., "sleek black blouse with subtle satin sheen, slightly puffed sleeves") */
+  clothing: string;
+  /** Facial features (e.g., "light and natural makeup, with a warm smile") */
+  facialFeatures: string;
+  /** Accessories (e.g., "minimal silver jewelry", "thin, gold-rimmed circular spectacles") */
+  accessories: string;
+  /** Unique identifying details for better Veo3 consistency */
+  uniqueIdentifiers: string[];
+}
+
+/**
+ * Enhanced scene analysis result with character consistency support
+ */
+export interface EnhancedSceneAnalysisResult extends SceneAnalysisResult {
+  /** Whether character consistency is required across scenes */
+  requiresCharacterConsistency: boolean;
+  /** Detailed character descriptions for Veo3 consistency */
+  characterDescriptions: CharacterDescription[];
+  /** Mapping of scene numbers to character IDs present in each scene */
+  sceneCharacterMappings: Record<number, string[]>;
+}
+
 // =============================================================================
 // UTILITY TYPES
 // =============================================================================
@@ -354,7 +395,8 @@ export const DEFAULT_ENHANCE_OPTIONS: Required<EnhanceOptions> = {
   includeWebSearch: true,
   searchContextSize: 'medium',
   maxTokens: 500,
-  temperature: 0.7
+  temperature: 0.7,
+  includeSceneAnalysis: false
 };
 
 /**
