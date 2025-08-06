@@ -90,13 +90,38 @@ export class PromptEnhancementService {
         systemPrompt = this.getSystemPrompt();
       }
       
+      // Perform scene analysis first if requested to determine output strategy
+      let sceneAnalysisResult;
+      if (enhanceOptions.includeSceneAnalysis) {
+        try {
+          const sceneAnalysisService = getSceneAnalysisService();
+          sceneAnalysisResult = await sceneAnalysisService.analyzePrompt(sanitizedPrompt);
+        } catch (error) {
+          // Scene analysis is optional - continue without it if it fails
+          console.warn('Scene analysis failed:', error);
+        }
+      }
+      
+      // Adjust system prompt based on scene analysis results
+      let finalSystemPrompt = systemPrompt;
+      if (sceneAnalysisResult?.isMultiScene && sceneAnalysisResult.sceneCount > 1) {
+        // For multi-scene prompts, modify system prompt to generate separate scene outputs
+        finalSystemPrompt = systemPrompt.replace(
+          'Transform the user\'s prompt with MINIMAL enhancement. OUTPUT ONLY THE ENHANCED PROMPT - NO OTHER ADDITIONAL TEXT.',
+          `Transform the user's prompt into ${sceneAnalysisResult.sceneCount} separate scene prompts (one per line).
+Each line should start with "SCENE:" followed by a complete Veo3-ready prompt for that scene.
+Output ${sceneAnalysisResult.sceneCount} lines total, each beginning with "SCENE:".
+Use MINIMAL enhancement for each scene. DO NOT add any other text, commentary, or explanations.`
+        );
+      }
+      
       // Use Chat Completions API (works with current SDK)
       response = await client.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
-            content: systemPrompt
+            content: finalSystemPrompt
           },
           {
             role: "user",
@@ -114,18 +139,6 @@ export class PromptEnhancementService {
       
       if (!enhancedPrompt) {
         throw new Error('No enhancement generated from OpenAI');
-      }
-      
-      // Perform scene analysis if requested
-      let sceneAnalysisResult;
-      if (enhanceOptions.includeSceneAnalysis) {
-        try {
-          const sceneAnalysisService = getSceneAnalysisService();
-          sceneAnalysisResult = await sceneAnalysisService.analyzePrompt(sanitizedPrompt);
-        } catch (error) {
-          // Scene analysis is optional - continue without it if it fails
-          console.warn('Scene analysis failed:', error);
-        }
       }
       
       // Calculate processing metadata
@@ -252,23 +265,29 @@ export class PromptEnhancementService {
    * @returns System prompt optimized for Veo3 video generation
    */
   private getSystemPrompt(): string {
-    return `You are an expert video content creator specializing in viral TikTok content and AI video generation.
+    return `You are a video prompt enhancer for Veo3 AI video generation. Your job is to add MINIMAL necessary details while preserving the user's original intent.
 
-Your task is to transform user prompts into detailed, engaging video scene descriptions optimized for Veo3 AI video generation.
+CRITICAL RULES:
+- RESPECT the user's specified camera perspective (Ring camera POV = static single angle, no camera movements)
+- ONLY enhance what's necessary for video generation
+- DO NOT add details the user didn't specify (clothing, extra actions, complex camera work)
+- DO NOT change the core concept or add unnecessary creative elements
+- Output ONLY the enhanced prompt description
+- NO commentary, explanations, or meta-text
 
-Guidelines:
-1. **Format**: Create detailed scene descriptions suitable for 8-second TikTok videos in 9:16 vertical format
-2. **Visual Details**: Include specific visual elements, character descriptions, settings, and camera angles
-3. **Audio Elements**: Suggest audio, music, or dialogue that would enhance the scene
-4. **Engagement**: Focus on elements that would make the video engaging and potentially viral
-5. **Clarity**: Be specific about actions, expressions, and visual composition
-6. **Length**: Keep descriptions detailed but concise (suitable for video generation)
+Enhancement Guidelines:
+1. **Preserve Original Intent**: Keep the user's core idea exactly as described
+2. **Minimal Visual Enhancement**: Add only essential details for video clarity (lighting, basic setting)
+3. **Respect Camera Constraints**: If user specifies POV/camera type, maintain that perspective
+4. **Stay Realistic**: If user says "realistic" or "as-real-as-possible", avoid cartoonish or overly dramatic elements
+5. **Audio Only if Needed**: Only suggest audio if the user doesn't specify "no audio"
+6. **8-Second Focus**: Ensure the scene works within 8-second TikTok format
 
-Example transformation:
-User: "funny cat video"
-Enhanced: "A fluffy orange tabby cat wearing oversized sunglasses sits at a tiny desk with a laptop, pretending to work from home. The cat types on the keyboard with its paws while maintaining a serious expression. Close-up shots show the cat's focused face behind the sunglasses, occasionally looking up at the camera with a confused head tilt. The scene includes upbeat, corporate-style background music with the cat's occasional meows. The setting is a bright, modern home office with plants in the background."
+Example:
+User: "Ring camera POV of backyard with dog playing"
+Enhanced: "Night footage from a fixed Ring camera perspective showing a suburban backyard. A dog plays on the grass under ambient outdoor lighting. The static camera captures the scene from the mounted position with typical Ring camera night vision quality."
 
-Transform the user's prompt following these guidelines, making it detailed and optimized for AI video generation.`;
+Transform the user's prompt with MINIMAL enhancement. OUTPUT ONLY THE ENHANCED PROMPT - NO OTHER ADDITIONAL TEXT.`;
   }
   
   /**
@@ -280,6 +299,14 @@ Transform the user's prompt following these guidelines, making it detailed and o
     return `You are an expert video content creator specializing in viral TikTok content and AI video generation.
 
 Your task is to transform user prompts into detailed, engaging video scene descriptions optimized for Veo3 AI video generation. You have access to web search to research current trends and viral content patterns.
+
+CRITICAL OUTPUT REQUIREMENTS:
+- Output ONLY the enhanced video prompt description
+- Do NOT include any commentary, explanations, or meta-text
+- Do NOT add phrases like "This video will..." or "This engaging content..." or "This twist..."
+- Do NOT add concluding statements about virality or shareability
+- The output will be fed DIRECTLY to Veo3 AI video generation
+- NO editorial comments about the content's potential success
 
 Guidelines:
 1. **Research First**: Use web search to find current TikTok trends, viral formats, and popular content related to the user's prompt
@@ -297,7 +324,7 @@ Process:
 3. Transform the prompt incorporating these trending elements
 4. Create a detailed scene description optimized for Veo3 generation
 
-Transform the user's prompt following these guidelines, making it detailed, current, and optimized for viral AI video generation.`;
+Transform the user's prompt following these guidelines. OUTPUT ONLY THE ENHANCED PROMPT - NO OTHER TEXT.`;
   }
   
   

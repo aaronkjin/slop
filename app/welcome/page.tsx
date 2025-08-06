@@ -197,7 +197,7 @@ export default function WelcomePage() {
               <h1 className="text-3xl md:text-5xl font-light text-gray-600 tracking-tight leading-none">
                 Create{" "}
                 <ShimmerText
-                  text="hilarious"
+                  text="viral"
                   className="font-light"
                   textColor="rgb(75, 85, 99)"
                 />

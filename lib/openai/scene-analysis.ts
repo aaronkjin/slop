@@ -331,36 +331,50 @@ export class SceneAnalysisService {
   // System prompts for different analysis types
   
   private getSceneAnalysisSystemPrompt(): string {
-    return `You are an expert video scene analyst specializing in determining whether user prompts require single or multiple scenes for optimal video generation.
+    return `You are a TikTok video analyst. Your job is to determine if a prompt needs ONE scene (preferred for TikTok) or multiple scenes.
 
-Analyze prompts for:
-1. **Temporal Complexity**: Does the prompt describe events that happen sequentially over time?
-2. **Setting Changes**: Does the prompt involve different locations or environments? 
-3. **Duration**: Would the described action take longer than 8 seconds to show effectively?
-4. **Narrative Flow**: Does the prompt tell a story with distinct beginning, middle, and end?
+STRONG BIAS TOWARD SINGLE SCENES:
+- TikTok users have 8-second attention spans
+- Most content works better in a single 8-second scene
+- Only recommend multiple scenes for VERY CLEAR sequential stories
 
-Guidelines:
-- Single scene: Simple actions, single location, can be shown in 8 seconds
-- Multi-scene: Sequential events, location changes, story progression, longer duration
+Only suggest multiple scenes if ALL of these are true:
+1. The prompt has VERY CLEAR temporal sequence words like "then", "next", "after that", "finally"
+2. The events CANNOT fit into a single 8-second scene
+3. The prompt describes completely different actions that happen one after another
+4. The prompt is longer than 200 characters
 
-Respond with analysis of whether this requires single or multiple scenes and estimate scene count (1-5 max).`;
+Examples:
+- "Capybaras jumping on trampoline, one falls off" = SINGLE SCENE (all happens together)
+- "Chef cooking, burns food, calls fire department, orders pizza" = MULTIPLE SCENES (clear sequence)
+- "Person running late, spills coffee, catches bus" = SINGLE SCENE (can show all in 8 seconds)
+
+Default to SINGLE SCENE unless absolutely certain multiple scenes are needed.`;
   }
   
   private getCharacterAnalysisSystemPrompt(): string {
-    return `You are an expert character analyst for AI video generation. Identify human characters in prompts and determine if they need consistent faces across scenes.
+    return `You are a HUMAN character analyst for AI video generation. Your job is to identify ONLY human people in prompts.
+
+STRICT REQUIREMENTS:
+- ONLY identify HUMAN PEOPLE (not animals, pets, objects, creatures)
+- Animals like capybaras, dogs, cats, etc. are NOT characters for this analysis
+- Only look for people: chef, teacher, friend, person, man, woman, etc.
 
 Look for:
-1. **Named Characters**: Specific people mentioned by name
-2. **Role-based Characters**: Chef, teacher, friend, etc.
-3. **Pronoun References**: He, she, they referring to specific people
-4. **Character Interactions**: People talking, interacting, or appearing together
+1. **Named People**: Specific human names (John, Sarah, etc.)
+2. **Human Roles**: Chef, teacher, friend, worker, person, man, woman
+3. **Pronoun References**: He, she, they referring to PEOPLE (not animals)
+4. **Human Interactions**: People talking, interacting with each other
 
-Guidelines:
-- Only identify HUMAN characters (not animals, objects, etc.)
-- Focus on characters that would appear in multiple scenes
-- Consider if the same person needs to look consistent across scenes
+CRITICAL: If the prompt only contains animals or objects, respond with "NO HUMAN CHARACTERS FOUND".
 
-List the human characters found and whether consistency is needed.`;
+Examples:
+- "A chef cooking" → HUMAN: chef
+- "Capybaras on trampoline" → NO HUMAN CHARACTERS FOUND
+- "A person walking their dog" → HUMAN: person
+- "Two friends arguing" → HUMAN: friends
+
+Only list HUMAN characters found.`;
   }
   
   private getCharacterDescriptionSystemPrompt(): string {
@@ -384,48 +398,63 @@ Example: "A cheerful Japanese woman in her late 20s, with straight shoulder-leng
   }
   
   private getSceneBreakdownSystemPrompt(): string {
-    return `You are an expert video scene director specializing in breaking down complex prompts into 8-second video scenes optimized for Veo3 generation.
+    return `You are a Veo3 prompt generator. Break down the user's prompt into separate 8-second video scenes.
 
-For each scene, provide:
-1. **Scene Description**: What happens in this specific 8-second segment
-2. **Visual Elements**: Key visual components to include
-3. **Audio Elements**: Sound effects, music, dialogue for this scene
-4. **Duration**: How long this scene should be (max 8 seconds)
-5. **Transitions**: How this scene connects to the next
+CRITICAL OUTPUT REQUIREMENTS:
+- Output ONLY individual Veo3-ready scene prompts
+- Each scene on a separate line starting with "SCENE:"
+- NO commentary, explanations, or meta-text
+- NO phrases like "This will..." or "This engaging..."
+- Output format: SCENE: [detailed scene description]
 
-Guidelines:
-- Each scene must be complete and engaging on its own
-- Scenes should flow logically from one to the next
-- Keep scenes focused and action-packed for TikTok format
-- Ensure smooth narrative progression
-- Maximum 8 seconds per scene for Veo3 constraints
+For each scene:
+- Include specific visual details, character actions, setting
+- Mention camera angles and lighting
+- Include audio elements (music, sounds, dialogue)
+- Make it complete and Veo3-ready
+- Maximum 8 seconds duration
+- Vertical TikTok format (9:16)
 
-Break down the prompt into logical scene segments with smooth transitions.`;
+Example:
+SCENE: A chef in a modern kitchen accidentally drops a pan, smoke fills the air as the fire alarm beeps. Close-up of his shocked expression with comedic timing. Upbeat kitchen sounds and a cartoonish "oops" sound effect.
+SCENE: The same chef frantically waving a towel at the smoke detector while opening windows. Wide shot showing the chaotic kitchen scene. Fast-paced comedy music with clattering sounds.
+
+Output only the SCENE: lines, nothing else.`;
   }
   
   // Helper methods for parsing and analysis
   
   private detectMultiSceneIndicators(prompt: string, analysis: string): boolean {
-    const multiSceneKeywords = [
-      'then', 'next', 'after', 'later', 'finally', 'suddenly', 
-      'meanwhile', 'first', 'second', 'third', 'sequence',
-      'story', 'journey', 'progression', 'timeline'
+    // HEAVILY BIAS TOWARD SINGLE SCENES FOR TIKTOK
+    // Only create multi-scene if there are VERY CLEAR sequential indicators
+    
+    const strongSequenceKeywords = [
+      'then ', 'next ', 'after that', 'later ', 'finally ', 
+      'first ', 'second ', 'third ', 'step 1', 'step 2', 'step 3',
+      'part 1', 'part 2', 'part 3'
     ];
     
     const lowerPrompt = prompt.toLowerCase();
-    const lowerAnalysis = analysis.toLowerCase();
     
-    // Check for keywords in both prompt and analysis
-    const hasKeywords = multiSceneKeywords.some(keyword => 
-      lowerPrompt.includes(keyword) || lowerAnalysis.includes(keyword)
-    );
+    // Count strong sequence indicators
+    let sequenceCount = 0;
+    strongSequenceKeywords.forEach(keyword => {
+      if (lowerPrompt.includes(keyword)) {
+        sequenceCount++;
+      }
+    });
     
-    // Check analysis for explicit multi-scene recommendation
-    const analysisRecommends = lowerAnalysis.includes('multiple') || 
-                               lowerAnalysis.includes('multi') || 
-                               lowerAnalysis.includes('several');
+    // Only consider multi-scene if:
+    // 1. At least 2 strong sequence indicators AND
+    // 2. Prompt is longer than 150 characters AND 
+    // 3. Contains clear temporal progression
+    const hasMultipleSequences = sequenceCount >= 2;
+    const isLongEnough = prompt.length > 250;
+    const hasTemporalProgression = lowerPrompt.includes('then ') && 
+                                  (lowerPrompt.includes('after') || lowerPrompt.includes('later') || lowerPrompt.includes('finally'));
     
-    return hasKeywords || analysisRecommends;
+    // For TikTok, be extremely conservative - most videos should be single scene
+    return hasMultipleSequences && isLongEnough && hasTemporalProgression;
   }
   
   private estimateSceneCount(prompt: string, analysis: string): number {
@@ -476,17 +505,29 @@ Break down the prompt into logical scene segments with smooth transitions.`;
   private extractCharacterNames(characterText: string): string[] {
     const characters: string[] = [];
     
-    // Simple extraction - look for common character patterns
+    // Check if no human characters were found
+    if (characterText.toLowerCase().includes('no human characters found') || 
+        characterText.toLowerCase().includes('no human characters') ||
+        characterText.toLowerCase().includes('only animals') ||
+        characterText.toLowerCase().includes('only contains animals')) {
+      return []; // Return empty array - no human characters
+    }
+    
+    // Simple extraction - look for HUMAN character patterns
     const lines = characterText.split('\n');
     for (const line of lines) {
       const lowerLine = line.toLowerCase();
-      if (lowerLine.includes('character') || lowerLine.includes('person') || 
+      if (lowerLine.includes('human:') || lowerLine.includes('person') || 
           lowerLine.includes('man') || lowerLine.includes('woman') ||
           lowerLine.includes('friend') || lowerLine.includes('chef') ||
           lowerLine.includes('teacher') || lowerLine.includes('worker')) {
-        const cleaned = line.replace(/[^\w\s]/g, '').trim();
-        if (cleaned.length > 0) {
-          characters.push(cleaned);
+        // Exclude animal-related lines
+        if (!lowerLine.includes('capybara') && !lowerLine.includes('dog') && 
+            !lowerLine.includes('cat') && !lowerLine.includes('animal')) {
+          const cleaned = line.replace(/[^\w\s]/g, '').trim();
+          if (cleaned.length > 0) {
+            characters.push(cleaned);
+          }
         }
       }
     }
@@ -561,18 +602,43 @@ Break down the prompt into logical scene segments with smooth transitions.`;
   
   private parseSceneBreakdown(sceneText: string, expectedSceneCount: number): SceneInfo[] {
     const scenes: SceneInfo[] = [];
-    const sections = sceneText.split(/scene\s*\d+/i).slice(1); // Split by "Scene 1", "Scene 2", etc.
     
-    for (let i = 0; i < Math.min(sections.length, expectedSceneCount); i++) {
-      const section = sections[i].trim();
-      
-      scenes.push({
-        sceneNumber: i + 1,
-        description: section.substring(0, 200), // Limit description length
-        duration: 8, // Max duration for Veo3
-        characters: [], // Will be populated by character mapping
-        visualElements: this.extractElements(section, 'visual'),
-        audioElements: this.extractElements(section, 'audio', 'sound')
+    // Look for SCENE: prefixed lines
+    const sceneLines = sceneText.split('\n')
+      .filter(line => line.trim().toUpperCase().startsWith('SCENE:'))
+      .map(line => line.replace(/^SCENE:\s*/i, '').trim())
+      .filter(line => line.length > 0);
+    
+    // If no SCENE: format found, try other parsing methods
+    if (sceneLines.length === 0) {
+      // Try splitting by scene indicators
+      const sections = sceneText.split(/scene\s*\d+/i).slice(1);
+      for (let i = 0; i < Math.min(sections.length, expectedSceneCount); i++) {
+        const section = sections[i].trim();
+        if (section) {
+          scenes.push({
+            sceneNumber: i + 1,
+            description: section.substring(0, 300),
+            duration: 8,
+            characters: [],
+            visualElements: this.extractElements(section, 'visual'),
+            audioElements: this.extractElements(section, 'audio', 'sound')
+          });
+        }
+      }
+    } else {
+      // Use the properly formatted SCENE: lines
+      sceneLines.forEach((sceneLine, index) => {
+        if (index < expectedSceneCount) {
+          scenes.push({
+            sceneNumber: index + 1,
+            description: sceneLine,
+            duration: 8,
+            characters: [],
+            visualElements: this.extractElements(sceneLine, 'visual', 'camera', 'light'),
+            audioElements: this.extractElements(sceneLine, 'audio', 'sound', 'music')
+          });
+        }
       });
     }
     
@@ -580,7 +646,7 @@ Break down the prompt into logical scene segments with smooth transitions.`;
     while (scenes.length < expectedSceneCount) {
       scenes.push({
         sceneNumber: scenes.length + 1,
-        description: `Scene ${scenes.length + 1} continuation`,
+        description: `Additional scene ${scenes.length + 1} continuation`,
         duration: 8,
         characters: [],
         visualElements: [],
@@ -612,11 +678,14 @@ Break down the prompt into logical scene segments with smooth transitions.`;
     sceneCount: number;
     complexity: 'simple' | 'moderate' | 'complex';
   } {
-    const hasSequenceWords = /\b(then|next|after|later|first|second|third|finally)\b/i.test(prompt);
-    const isLong = prompt.length > 150;
+    // HEAVILY BIAS TOWARD SINGLE SCENES - TikTok philosophy
+    const strongSequenceWords = /\b(then\s+|next\s+|after\s+that|finally\s+|first\s+.*second\s+|step\s+1.*step\s+2)\b/i.test(prompt);
+    const isVeryLong = prompt.length > 250;
+    const hasMultipleClearSteps = prompt.toLowerCase().split(/then|next|after|finally/).length > 3;
     
-    const isMultiScene = hasSequenceWords || isLong;
-    const sceneCount = isMultiScene ? Math.min(Math.ceil(prompt.length / 100), 4) : 1;
+    // Only create multi-scene for very clear sequential content
+    const isMultiScene = strongSequenceWords && isVeryLong && hasMultipleClearSteps;
+    const sceneCount = isMultiScene ? Math.min(Math.ceil(prompt.split(/then|next|after|finally/i).length), 3) : 1;
     const complexity = isMultiScene ? (sceneCount > 2 ? 'complex' : 'moderate') : 'simple';
     
     return { isMultiScene, sceneCount, complexity };
@@ -626,11 +695,29 @@ Break down the prompt into logical scene segments with smooth transitions.`;
     requiresConsistency: boolean;
     characters: string[];
   } {
-    const characterWords = ['person', 'man', 'woman', 'guy', 'girl', 'chef', 'teacher', 'friend', 'worker'];
+    // Only look for HUMAN character words
+    const humanCharacterWords = ['person', 'man', 'woman', 'guy', 'girl', 'chef', 'teacher', 'friend', 'worker', 'doctor', 'student'];
     const characters: string[] = [];
     
     const lowerPrompt = prompt.toLowerCase();
-    characterWords.forEach(word => {
+    
+    // Check if prompt is primarily about animals
+    const animalWords = ['capybara', 'dog', 'cat', 'bird', 'animal', 'pet'];
+    const hasAnimals = animalWords.some(animal => lowerPrompt.includes(animal));
+    
+    // If prompt is about animals and no clear human roles, return no characters
+    if (hasAnimals) {
+      const hasHumans = humanCharacterWords.some(human => lowerPrompt.includes(human));
+      if (!hasHumans) {
+        return {
+          requiresConsistency: false,
+          characters: []
+        };
+      }
+    }
+    
+    // Extract human characters
+    humanCharacterWords.forEach(word => {
       if (lowerPrompt.includes(word)) {
         characters.push(word);
       }
