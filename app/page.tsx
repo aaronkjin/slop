@@ -38,7 +38,7 @@ export default function Home() {
     setLastResult(null);
 
     try {
-      const response = await fetch("/api/analyze-scenes", {
+      const response = await fetch("/api/openai/analyze", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,12 +48,11 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.data) {
         setLastResult({
           success: true,
-          sceneCount: data.sceneAnalysis?.sceneCount || 1,
-          hasCharacters:
-            (data.sceneAnalysis?.characterDescriptions?.length || 0) > 0,
+          sceneCount: data.data.sceneCount || 1,
+          hasCharacters: data.data.sceneBreakdown.some((scene: any) => scene.characters.length > 0),
         });
       } else {
         setLastResult({

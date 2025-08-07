@@ -297,14 +297,69 @@ export class SceneAnalysisService {
    * @returns Single scene information
    */
   private async createSingleScene(prompt: string): Promise<SceneInfo> {
-    return {
-      sceneNumber: 1,
-      description: prompt,
-      duration: 8,
-      characters: [],
-      visualElements: [],
-      audioElements: []
-    };
+    try {
+      const client = getOpenAIClient();
+      
+      // Use OpenAI to enhance the prompt for a single scene
+      const response = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are a video prompt enhancer for Veo3 AI video generation. Transform the user's prompt into a detailed, engaging video scene description optimized for 8-second TikTok videos in 9:16 vertical format.
+
+CRITICAL RULES:
+- RESPECT the user's specified camera perspective and intent
+- ONLY enhance what's necessary for video generation
+- DO NOT change the core concept or add unnecessary creative elements
+- Output ONLY the enhanced scene description
+- NO commentary, explanations, or meta-text
+
+Enhancement Guidelines:
+1. **Preserve Original Intent**: Keep the user's core idea exactly as described
+2. **Visual Details**: Add specific visual elements, lighting, and setting details
+3. **Character Actions**: Describe specific actions and expressions if characters are mentioned
+4. **Camera Work**: Suggest appropriate camera angles for the scene
+5. **Audio Elements**: Suggest relevant audio if appropriate
+6. **8-Second Focus**: Ensure the scene works within 8-second TikTok format
+
+Transform the user's prompt into a detailed scene description.`
+          },
+          {
+            role: "user",
+            content: `Enhance this prompt for a single scene: "${prompt}"`
+          }
+        ],
+        max_tokens: 400,
+        temperature: 0.7,
+      });
+      
+      const enhancedDescription = response.choices[0]?.message?.content || prompt;
+      
+      // Parse basic character information from the enhanced description
+      const characters = this.extractCharactersFromText(enhancedDescription);
+      
+      return {
+        sceneNumber: 1,
+        description: enhancedDescription.trim(),
+        duration: 8,
+        characters,
+        visualElements: [],
+        audioElements: []
+      };
+      
+    } catch (error) {
+      // Fallback to original prompt on error
+      console.warn('Failed to enhance single scene:', error);
+      return {
+        sceneNumber: 1,
+        description: prompt,
+        duration: 8,
+        characters: [],
+        visualElements: [],
+        audioElements: []
+      };
+    }
   }
   
   /**
@@ -569,6 +624,26 @@ Output only the SCENE: lines, nothing else.`;
     };
   }
   
+  private extractCharactersFromText(text: string): string[] {
+    const characters: string[] = [];
+    const lowerText = text.toLowerCase();
+    
+    // Simple character detection based on common patterns
+    const characterKeywords = [
+      'person', 'man', 'woman', 'detective', 'character', 'individual',
+      'actor', 'performer', 'protagonist', 'figure', 'someone'
+    ];
+    
+    for (const keyword of characterKeywords) {
+      if (lowerText.includes(keyword)) {
+        characters.push(keyword);
+        break; // Just add one character indicator for simple scenes
+      }
+    }
+    
+    return characters;
+  }
+
   private extractDetail(text: string, ...keywords: string[]): string {
     const sentences = text.split(/[.!?]+/);
     
